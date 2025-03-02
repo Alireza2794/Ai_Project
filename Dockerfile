@@ -1,24 +1,25 @@
 FROM ubuntu:latest
 
-# نصب Tesseract و پیش‌نیازها
+# نصب پیش‌نیازهای سیستم
 RUN apt-get update && apt-get install -y \
-    tesseract-ocr \
     python3 \
     python3-pip \
     python3-venv \
+    tesseract-ocr \
     && rm -rf /var/lib/apt/lists/*
 
 # تنظیم محیط کار
-COPY requirements.txt /app/requirements.txt
 WORKDIR /app
 
-# نصب پکیج‌های پایتون
+# ایجاد و فعال‌سازی محیط مجازی
+RUN python3 -m venv /app/venv
+ENV PATH="/app/venv/bin:$PATH"
+
+# کپی و نصب پکیج‌های پایتون در محیط مجازی
+COPY requirements.txt /app/requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
 
-# تنظیم متغیر محیطی برای Tesseract
-ENV TESSERACT_PATH=/usr/bin/tesseract
-
-# کپی کردن کد پروژه
+# کپی کردن کل پروژه
 COPY . /app
 
 # اجرای برنامه
