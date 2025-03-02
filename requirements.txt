@@ -1,0 +1,6 @@
+Flask==3.0.0
+opencv-python==4.5.5
+pytesseract==0.3.10
+numpy==1.24.2
+matplotlib==3.7.1
+langdetect==1.0.9
