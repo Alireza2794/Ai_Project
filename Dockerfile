@@ -1,13 +1,10 @@
 FROM python:3.9-slim-buster
 
 # نصب پیش‌نیازهای سیستم
-RUN apt-get update && apt-get install -y \
-    python \
-    python-pip \
-    python-venv \
-    python-distutils \
-    tesseract-ocr \
-    && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && \
+    apt-get -qq -y install tesseract-ocr && \
+    apt-get -qq -y install libtesseract-dev
+
 
 # تنظیم محیط کار
 WORKDIR /app
