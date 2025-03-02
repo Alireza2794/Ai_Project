@@ -4,6 +4,7 @@ import cv2
 import re
 import math
 from langdetect import detect  
+import os
 
 app = Flask(__name__)
 
@@ -84,4 +85,6 @@ def solve_math():
     return jsonify({'results': results})
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    # app.run(debug=True)
+    port = int(os.environ.get("PORT", 5000))  # گرفتن پورت از متغیر محیطی
+    app.run(host="0.0.0.0", port=port, debug=True)
