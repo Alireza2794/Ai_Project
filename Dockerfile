@@ -2,10 +2,10 @@ FROM ubuntu:latest
 
 # نصب پیش‌نیازهای سیستم
 RUN apt-get update && apt-get install -y \
-    python3 \
-    python3-pip \
-    python3-venv \
-    python3-distutils \
+    python \
+    python-pip \
+    python-venv \
+    python-distutils \
     tesseract-ocr \
     && rm -rf /var/lib/apt/lists/*
 
@@ -13,7 +13,7 @@ RUN apt-get update && apt-get install -y \
 WORKDIR /app
 
 # ایجاد و فعال‌سازی محیط مجازی
-RUN python3 -m venv /app/venv
+RUN python -m venv /app/venv
 ENV PATH="/app/venv/bin:$PATH"
 
 # کپی و نصب پکیج‌های پایتون در محیط مجازی
@@ -25,4 +25,4 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY . /app
 
 # اجرای برنامه
-CMD ["python3", "app.py"]
+CMD ["python", "app.py"]

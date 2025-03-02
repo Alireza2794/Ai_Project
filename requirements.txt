@@ -5,4 +5,3 @@ matplotlib==3.7.1
 langdetect==1.0.9
 tesseract
 pytesseract
-setuptools<58.0.0
