@@ -1,4 +1,4 @@
-FROM ubuntu:latest
+FROM python:3.9-slim-buster
 
 # نصب پیش‌نیازهای سیستم
 RUN apt-get update && apt-get install -y \
@@ -12,17 +12,12 @@ RUN apt-get update && apt-get install -y \
 # تنظیم محیط کار
 WORKDIR /app
 
-# ایجاد و فعال‌سازی محیط مجازی
-RUN python -m venv /app/venv
-ENV PATH="/app/venv/bin:$PATH"
-
 # کپی و نصب پکیج‌های پایتون در محیط مجازی
-COPY requirements.txt /app/requirements.txt
-RUN pip install --upgrade pip setuptools
-RUN pip install --no-cache-dir -r requirements.txt
+COPY requirements.txt requirements.txt
+RUN pip install -r requirements.txt
 
 # کپی کردن کل پروژه
-COPY . /app
+COPY . .
 
 # اجرای برنامه
-CMD ["python", "app.py"]
+CMD ["gunicorn", "app:app"]

@@ -1,7 +1,8 @@
-Flask==3.0.0
-opencv-python
-numpy==1.24.2
-matplotlib==3.7.1
-langdetect==1.0.9
-tesseract
+flask
 pytesseract
+gunicorn
+opencv-python
+numpy
+matplotlib
+langdetect
+tesseract
