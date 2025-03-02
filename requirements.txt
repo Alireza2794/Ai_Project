@@ -1,8 +1,0 @@
-Flask
-pytesseract
-gunicorn
-opencv-python
-numpy
-matplotlib
-langdetect
-tesseract

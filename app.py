@@ -9,8 +9,7 @@ import os
 app = Flask(__name__)
 
 # تنظیم مسیر Tesseract
-# pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
-pytesseract.pytesseract.tesseract_cmd = "/usr/bin/tesseract"
+pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
 
 def detect_language(text_eng, text_fas):
     text = text_eng if len(text_eng.strip()) > len(text_fas.strip()) else text_fas
