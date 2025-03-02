@@ -5,6 +5,7 @@ RUN apt-get update && apt-get install -y \
     python3 \
     python3-pip \
     python3-venv \
+    python3-distutils \
     tesseract-ocr \
     && rm -rf /var/lib/apt/lists/*
 
@@ -17,6 +18,7 @@ ENV PATH="/app/venv/bin:$PATH"
 
 # کپی و نصب پکیج‌های پایتون در محیط مجازی
 COPY requirements.txt /app/requirements.txt
+RUN pip install --upgrade pip setuptools
 RUN pip install --no-cache-dir -r requirements.txt
 
 # کپی کردن کل پروژه
