@@ -19,6 +19,17 @@ def detect_language(text_eng, text_fas):
     except:
         return "fas"  # پیش‌فرض فارسی
 
+def persian_to_english_numbers(text):
+    mapping = {
+        '۰': '0', '۱': '1', '۲': '2', '۳': '3', '۴': '4',
+        '۵': '5', '۶': '6', '۷': '7', '۸': '8', '۹': '9',
+        '٠': '0', '١': '1', '٢': '2', '٣': '3', '٤': '4',
+        '٥': '5', '٦': '6', '٧': '7', '٨': '8', '٩': '9'
+    }
+    return ''.join(mapping.get(ch, ch) for ch in text)
+
+
+
 @app.route('/')
 def index():
     return render_template('index.html')
@@ -62,24 +73,44 @@ def solve_math():
     file.save(image_path)
     image = cv2.imread(image_path)
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    gray = cv2.resize(gray, None, fx=2, fy=2, interpolation=cv2.INTER_LINEAR)
+    clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8,8))
+    gray = clahe.apply(gray)
+    gray = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)[1]
+
 
     # استخراج متن
-    extracted_text = pytesseract.image_to_string(gray, lang="eng")
+    extracted_text = pytesseract.image_to_string(gray, lang="eng+fas")
 
-    # شناسایی عملیات ریاضی
-    pattern = r'(\d+\.?\d*)\s?([+\-*/^()])\s?(\d+\.?\d*)'
+    # جایگزینی "÷" با "/" و حذف فاصله‌ها
+    extracted_text = extracted_text.replace("÷", "/").replace(" ", "")
+
+    # تبدیل اعداد فارسی به انگلیسی
+    extracted_text = persian_to_english_numbers(extracted_text)
+
+
+    # اگر OCR به اشتباه علامت تقسیم را به "+" تبدیل کرده باشد، اصلاح می‌کنیم.
+    extracted_text = re.sub(r'(\d+)\+(\d+\()', r'\1/\2', extracted_text)
+
+    # اصلاح ضرب ضمنی: تبدیل "digit(" به "digit*(" (مثلاً 2(2+2) به 2*(2+2))
+    extracted_text = re.sub(r'(\d)\(', r'\1*(', extracted_text)
+
+    # شناسایی عملیات ریاضی با یک الگوی ساده
+    pattern = r'[\d+\-*/^().]+'
     matches = re.findall(pattern, extracted_text)
 
     def solve_expression(expression):
         try:
-            return eval(expression)
+            # ارزیابی عبارت به‌صورت ایمن
+            result = eval(expression, {"__builtins__": None}, {})
+            result = int(result) if result.is_integer() else result
+
+            return result
         except Exception:
             return "خطا در پردازش"
 
     results = []
-    for match in matches:
-        num1, operator, num2 = match
-        expression = f"{num1} {operator} {num2}"
+    for expression in matches:
         results.append(f"{expression} = {solve_expression(expression)}")
 
     return jsonify({'results': results})
